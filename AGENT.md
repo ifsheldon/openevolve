@@ -1,5 +1,3 @@
-# CLAUDE.md
-
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Overview
@@ -10,38 +8,28 @@ OpenEvolve is an open-source implementation of Google DeepMind's AlphaEvolve sys
 
 ### Development Setup
 ```bash
-# Install in development mode with all dependencies
-pip install -e ".[dev]"
-
-# Or use Makefile
-make install
+uv sync
 ```
 
 ### Running Tests
 ```bash
 # Run all tests
-python -m unittest discover tests
-
-# Or use Makefile
-make test
+uv run python -m unittest discover tests
 ```
 
 ### Code Formatting
 ```bash
 # Format with Black
-python -m black openevolve examples tests scripts
-
-# Or use Makefile
-make lint
+uv run python -m black openevolve examples tests scripts
 ```
 
 ### Running OpenEvolve
 ```bash
 # Basic evolution run
-python openevolve-run.py path/to/initial_program.py path/to/evaluator.py --config path/to/config.yaml --iterations 1000
+uv run python openevolve-run.py path/to/initial_program.py path/to/evaluator.py --config path/to/config.yaml --iterations 1000
 
 # Resume from checkpoint
-python openevolve-run.py path/to/initial_program.py path/to/evaluator.py \
+uv run python openevolve-run.py path/to/initial_program.py path/to/evaluator.py \
   --config path/to/config.yaml \
   --checkpoint path/to/checkpoint_directory \
   --iterations 50
@@ -50,7 +38,7 @@ python openevolve-run.py path/to/initial_program.py path/to/evaluator.py \
 ### Visualization
 ```bash
 # View evolution tree
-python scripts/visualizer.py --path examples/function_minimization/openevolve_output/checkpoints/checkpoint_100/
+uv runpython scripts/visualizer.py --path examples/function_minimization/openevolve_output/checkpoints/checkpoint_100/
 ```
 
 ## High-Level Architecture
