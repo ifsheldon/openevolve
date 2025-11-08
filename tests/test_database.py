@@ -183,15 +183,22 @@ class TestProgramDatabase(unittest.TestCase):
             all_feature_map_values.extend(island_map.values())
 
         # At least one of our test programs should be in some island's feature map
-        test_programs_in_map = [v for v in all_feature_map_values if v in ["map_test1", "map_test2"]]
+        test_programs_in_map = [
+            v for v in all_feature_map_values if v in ["map_test1", "map_test2"]
+        ]
         self.assertGreater(
-            len(test_programs_in_map), 0, "At least one test program should be in island feature maps"
+            len(test_programs_in_map),
+            0,
+            "At least one test program should be in island feature maps",
         )
 
-        # If both are in the same island's map with the same feature coordinates, 
+        # If both are in the same island's map with the same feature coordinates,
         # verify the better program is kept
         for island_map in self.db.island_feature_maps:
-            if "map_test1" in island_map.values() and "map_test2" in island_map.values():
+            if (
+                "map_test1" in island_map.values()
+                and "map_test2" in island_map.values()
+            ):
                 # Find their keys in this island
                 key1 = key2 = None
                 for k, v in island_map.items():
@@ -199,7 +206,7 @@ class TestProgramDatabase(unittest.TestCase):
                         key1 = k
                     elif v == "map_test2":
                         key2 = k
-                
+
                 # If they have the same key, the better program should be kept
                 if key1 == key2:
                     self.assertEqual(island_map[key1], "map_test2")
@@ -270,7 +277,9 @@ class TestProgramDatabase(unittest.TestCase):
         self.assertEqual(self.db.best_program_id, "best_test1")
 
         self.db.add(program2)
-        self.assertEqual(self.db.best_program_id, "best_test2")  # Should update to better program
+        self.assertEqual(
+            self.db.best_program_id, "best_test2"
+        )  # Should update to better program
 
     def test_population_limit_enforcement(self):
         """Test population size limit enforcement"""
@@ -300,7 +309,9 @@ class TestProgramDatabase(unittest.TestCase):
         programs = [
             Program(id="short", code="x=1", metrics={"score": 0.5}),
             Program(
-                id="medium", code="def func():\n    return x*2\n    pass", metrics={"score": 0.5}
+                id="medium",
+                code="def func():\n    return x*2\n    pass",
+                metrics={"score": 0.5},
             ),
             Program(
                 id="long",
@@ -314,7 +325,9 @@ class TestProgramDatabase(unittest.TestCase):
 
         # Test binning for different complexity values
         short_bin = self.db._calculate_complexity_bin(len("x=1"))
-        medium_bin = self.db._calculate_complexity_bin(len("def func():\n    return x*2\n    pass"))
+        medium_bin = self.db._calculate_complexity_bin(
+            len("def func():\n    return x*2\n    pass")
+        )
         long_bin = self.db._calculate_complexity_bin(
             len(
                 "def complex_function():\n    result = []\n    for i in range(100):\n        result.append(i*2)\n    return result"
@@ -349,7 +362,11 @@ class TestProgramDatabase(unittest.TestCase):
         # Add programs with different code structures for diversity testing
         programs = [
             Program(id="simple", code="x = 1", metrics={"score": 0.5}),
-            Program(id="function", code="def add(a, b):\n    return a + b", metrics={"score": 0.5}),
+            Program(
+                id="function",
+                code="def add(a, b):\n    return a + b",
+                metrics={"score": 0.5},
+            ),
             Program(
                 id="loop",
                 code="for i in range(10):\n    print(i)\n    x += i",
@@ -371,7 +388,9 @@ class TestProgramDatabase(unittest.TestCase):
         complex_prog = programs[3]
 
         # Calculate diversity for simple vs complex programs
-        simple_diversity = self.db._fast_code_diversity(simple_prog.code, complex_prog.code)
+        simple_diversity = self.db._fast_code_diversity(
+            simple_prog.code, complex_prog.code
+        )
 
         # Test the binning
         bin_idx = self.db._calculate_diversity_bin(simple_diversity)
@@ -401,7 +420,9 @@ class TestProgramDatabase(unittest.TestCase):
         # Add multiple identical programs
         for i in range(3):
             program = Program(
-                id=f"identical_{i}", code="x = 1", metrics={"score": 0.5}  # Same code
+                id=f"identical_{i}",
+                code="x = 1",
+                metrics={"score": 0.5},  # Same code
             )
             self.db.add(program)
 
@@ -436,8 +457,14 @@ class TestProgramDatabase(unittest.TestCase):
         # Add programs with different structures
         programs = [
             Program(id="prog1", code="x = 1", metrics={"score": 0.5}),
-            Program(id="prog2", code="def func():\n    return 2", metrics={"score": 0.5}),
-            Program(id="prog3", code="for i in range(5):\n    print(i)", metrics={"score": 0.5}),
+            Program(
+                id="prog2", code="def func():\n    return 2", metrics={"score": 0.5}
+            ),
+            Program(
+                id="prog3",
+                code="for i in range(5):\n    print(i)",
+                metrics={"score": 0.5},
+            ),
         ]
 
         for program in programs:
@@ -447,7 +474,9 @@ class TestProgramDatabase(unittest.TestCase):
         test_config = self.db.config
         test_config.feature_dimensions = ["score", "complexity", "diversity"]
 
-        test_program = Program(id="test", code="def test(): return 42", metrics={"score": 0.7})
+        test_program = Program(
+            id="test", code="def test(): return 42", metrics={"score": 0.7}
+        )
 
         # Calculate feature coordinates - should include diversity dimension
         coords = self.db._calculate_feature_coords(test_program)
@@ -489,7 +518,9 @@ class TestProgramDatabase(unittest.TestCase):
         # Count initial programs (no _migrant suffixes should exist)
         initial_programs = set(multi_db.programs.keys())
         initial_migrant_count = sum(1 for pid in initial_programs if "_migrant_" in pid)
-        self.assertEqual(initial_migrant_count, 0)  # Should be none with new implementation
+        self.assertEqual(
+            initial_migrant_count, 0
+        )  # Should be none with new implementation
 
         # Run migration
         multi_db.island_generations[0] = config.database.migration_interval
@@ -505,11 +536,21 @@ class TestProgramDatabase(unittest.TestCase):
         # With new implementation, no programs should have _migrant_ suffixes
         new_programs = set(multi_db.programs.keys())
         new_migrant_ids = [pid for pid in new_programs if "_migrant_" in pid]
-        self.assertEqual(len(new_migrant_ids), 0, "New implementation should not create _migrant suffix programs")
-        
+        self.assertEqual(
+            len(new_migrant_ids),
+            0,
+            "New implementation should not create _migrant suffix programs",
+        )
+
         # Verify that programs are still distributed across islands (migration occurred)
-        total_programs_in_maps = sum(len(island_map) for island_map in multi_db.island_feature_maps)
-        self.assertGreaterEqual(total_programs_in_maps, 3, "Programs should be distributed in island feature maps")
+        total_programs_in_maps = sum(
+            len(island_map) for island_map in multi_db.island_feature_maps
+        )
+        self.assertGreaterEqual(
+            total_programs_in_maps,
+            3,
+            "Programs should be distributed in island feature maps",
+        )
 
     def test_empty_island_initialization_creates_copies(self):
         """Test that empty islands are initialized with copies, not shared references"""
@@ -541,7 +582,9 @@ class TestProgramDatabase(unittest.TestCase):
         # The sampled program should be a copy, not the original
         self.assertNotEqual(sampled_parent.id, "original_program")
         self.assertEqual(sampled_parent.code, program.code)  # Same code
-        self.assertEqual(sampled_parent.parent_id, "original_program")  # Parent is the original
+        self.assertEqual(
+            sampled_parent.parent_id, "original_program"
+        )  # Parent is the original
 
         # Check island membership
         self.assertIn("original_program", multi_db.islands[1])
@@ -630,7 +673,9 @@ class TestProgramDatabase(unittest.TestCase):
                 # Count occurrences of "migrant" in ID
                 migrant_count = program_id.count("migrant")
                 self.assertLessEqual(
-                    migrant_count, 1, f"Program ID {program_id} has been migrated multiple times"
+                    migrant_count,
+                    1,
+                    f"Program ID {program_id} has been migrated multiple times",
                 )
 
 

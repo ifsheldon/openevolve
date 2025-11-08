@@ -55,7 +55,11 @@ class TestFeatureStatsPersistence(unittest.TestCase):
 
         # Store original feature_stats for comparison
         original_stats = {
-            dim: {"min": stats["min"], "max": stats["max"], "values": stats["values"].copy()}
+            dim: {
+                "min": stats["min"],
+                "max": stats["max"],
+                "values": stats["values"].copy(),
+            }
             for dim, stats in db1.feature_stats.items()
         }
 

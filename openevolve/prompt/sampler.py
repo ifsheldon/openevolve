@@ -46,7 +46,9 @@ class PromptSampler:
         """
         self.system_template_override = system_template
         self.user_template_override = user_template
-        logger.info(f"Set custom templates: system={system_template}, user={user_template}")
+        logger.info(
+            f"Set custom templates: system={system_template}, user={user_template}"
+        )
 
     def build_prompt(
         self,
@@ -93,14 +95,18 @@ class PromptSampler:
             user_template_key = self.user_template_override
         else:
             # Default behavior: diff-based vs full rewrite
-            user_template_key = "diff_user" if diff_based_evolution else "full_rewrite_user"
+            user_template_key = (
+                "diff_user" if diff_based_evolution else "full_rewrite_user"
+            )
 
         # Get the template
         user_template = self.template_manager.get_template(user_template_key)
 
         # Use system template override if set
         if self.system_template_override:
-            system_message = self.template_manager.get_template(self.system_template_override)
+            system_message = self.template_manager.get_template(
+                self.system_template_override
+            )
         else:
             system_message = self.config.system_message
             # If system_message is a template name rather than content, get the template
@@ -112,7 +118,11 @@ class PromptSampler:
 
         # Identify areas for improvement
         improvement_areas = self._identify_improvement_areas(
-            current_program, parent_program, program_metrics, previous_programs, feature_dimensions
+            current_program,
+            parent_program,
+            program_metrics,
+            previous_programs,
+            feature_dimensions,
         )
 
         # Format evolution history
@@ -139,7 +149,9 @@ class PromptSampler:
             metrics=metrics_str,
             fitness_score=f"{fitness_score:.4f}",
             feature_coords=feature_coords,
-            feature_dimensions=", ".join(feature_dimensions) if feature_dimensions else "None",
+            feature_dimensions=", ".join(feature_dimensions)
+            if feature_dimensions
+            else "None",
             improvement_areas=improvement_areas,
             evolution_history=evolution_history,
             current_program=current_program,
@@ -199,7 +211,9 @@ class PromptSampler:
                 )
                 improvement_areas.append(msg)
             elif abs(current_fitness - prev_fitness) < 1e-6:  # Essentially unchanged
-                msg = self.template_manager.get_fragment("fitness_stable", current=current_fitness)
+                msg = self.template_manager.get_fragment(
+                    "fitness_stable", current=current_fitness
+                )
                 improvement_areas.append(msg)
 
         # Note feature exploration (not good/bad, just informational)
@@ -213,15 +227,20 @@ class PromptSampler:
 
         # Code length check (configurable threshold)
         threshold = (
-            self.config.suggest_simplification_after_chars or self.config.code_length_threshold
+            self.config.suggest_simplification_after_chars
+            or self.config.code_length_threshold
         )
         if threshold and len(current_program) > threshold:
-            msg = self.template_manager.get_fragment("code_too_long", threshold=threshold)
+            msg = self.template_manager.get_fragment(
+                "code_too_long", threshold=threshold
+            )
             improvement_areas.append(msg)
 
         # Default guidance if nothing specific
         if not improvement_areas:
-            improvement_areas.append(self.template_manager.get_fragment("no_specific_guidance"))
+            improvement_areas.append(
+                self.template_manager.get_fragment("no_specific_guidance")
+            )
 
         return "\n".join(f"- {area}" for area in improvement_areas)
 
@@ -236,7 +255,9 @@ class PromptSampler:
         """Format the evolution history for the prompt"""
         # Get templates
         history_template = self.template_manager.get_template("evolution_history")
-        previous_attempt_template = self.template_manager.get_template("previous_attempt")
+        previous_attempt_template = self.template_manager.get_template(
+            "previous_attempt"
+        )
         top_program_template = self.template_manager.get_template("top_program")
 
         # Format previous attempts (most recent first)
@@ -275,7 +296,9 @@ class PromptSampler:
                 parent_value = parent_metrics.get(m, 0)
 
                 # Only compare if both values are numeric
-                if isinstance(prog_value, (int, float)) and isinstance(parent_value, (int, float)):
+                if isinstance(prog_value, (int, float)) and isinstance(
+                    parent_value, (int, float)
+                ):
                     if prog_value > parent_value:
                         numeric_comparisons_improved.append(True)
                     else:
@@ -304,14 +327,18 @@ class PromptSampler:
 
         # Format top programs
         top_programs_str = ""
-        selected_top = top_programs[: min(self.config.num_top_programs, len(top_programs))]
+        selected_top = top_programs[
+            : min(self.config.num_top_programs, len(top_programs))
+        ]
 
         for i, program in enumerate(selected_top):
             # Use the full program code
             program_code = program.get("code", "")
 
             # Calculate fitness score (prefers combined_score, excludes feature dimensions)
-            score = get_fitness_score(program.get("metrics", {}), feature_dimensions or [])
+            score = get_fitness_score(
+                program.get("metrics", {}), feature_dimensions or []
+            )
 
             # Extract key features (this could be more sophisticated)
             key_features = program.get("key_features", [])
@@ -320,7 +347,9 @@ class PromptSampler:
                 for name, value in program.get("metrics", {}).items():
                     if isinstance(value, (int, float)):
                         try:
-                            key_features.append(f"Performs well on {name} ({value:.4f})")
+                            key_features.append(
+                                f"Performs well on {name} ({value:.4f})"
+                            )
                         except (ValueError, TypeError):
                             key_features.append(f"Performs well on {name} ({value})")
                     else:
@@ -361,7 +390,9 @@ class PromptSampler:
                     program_code = program.get("code", "")
 
                     # Calculate fitness score (prefers combined_score, excludes feature dimensions)
-                    score = get_fitness_score(program.get("metrics", {}), feature_dimensions or [])
+                    score = get_fitness_score(
+                        program.get("metrics", {}), feature_dimensions or []
+                    )
 
                     # Extract key features
                     key_features = program.get("key_features", [])
@@ -421,8 +452,12 @@ class PromptSampler:
             return ""
 
         # Get templates
-        inspirations_section_template = self.template_manager.get_template("inspirations_section")
-        inspiration_program_template = self.template_manager.get_template("inspiration_program")
+        inspirations_section_template = self.template_manager.get_template(
+            "inspirations_section"
+        )
+        inspiration_program_template = self.template_manager.get_template(
+            "inspiration_program"
+        )
 
         inspiration_programs_str = ""
 
@@ -431,10 +466,14 @@ class PromptSampler:
             program_code = program.get("code", "")
 
             # Calculate fitness score (prefers combined_score, excludes feature dimensions)
-            score = get_fitness_score(program.get("metrics", {}), feature_dimensions or [])
+            score = get_fitness_score(
+                program.get("metrics", {}), feature_dimensions or []
+            )
 
             # Determine program type based on metadata and score
-            program_type = self._determine_program_type(program, feature_dimensions or [])
+            program_type = self._determine_program_type(
+                program, feature_dimensions or []
+            )
 
             # Extract unique features (emphasizing diversity rather than just performance)
             unique_features = self._extract_unique_features(program)
@@ -532,12 +571,14 @@ class PromptSampler:
                 features.append("Mixed iteration strategies")
             if (
                 self.config.concise_implementation_max_lines
-                and len(code.split("\n")) <= self.config.concise_implementation_max_lines
+                and len(code.split("\n"))
+                <= self.config.concise_implementation_max_lines
             ):
                 features.append("Concise implementation")
             elif (
                 self.config.comprehensive_implementation_min_lines
-                and len(code.split("\n")) >= self.config.comprehensive_implementation_min_lines
+                and len(code.split("\n"))
+                >= self.config.comprehensive_implementation_min_lines
             ):
                 features.append("Comprehensive implementation")
 
@@ -582,7 +623,9 @@ class PromptSampler:
             content = self._safe_decode_artifact(value)
             # Truncate if too long
             if len(content) > self.config.max_artifact_bytes:
-                content = content[: self.config.max_artifact_bytes] + "\n... (truncated)"
+                content = (
+                    content[: self.config.max_artifact_bytes] + "\n... (truncated)"
+                )
 
             sections.append(f"### {key}\n```\n{content}\n```")
 

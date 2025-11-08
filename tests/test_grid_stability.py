@@ -35,9 +35,21 @@ class TestGridStability(unittest.TestCase):
 
         # Create programs with known metrics to establish ranges
         test_cases = [
-            {"combined_score": 0.2, "prompt_length": 100, "reasoning_sophistication": 0.1},
-            {"combined_score": 0.5, "prompt_length": 300, "reasoning_sophistication": 0.5},
-            {"combined_score": 0.8, "prompt_length": 500, "reasoning_sophistication": 0.9},
+            {
+                "combined_score": 0.2,
+                "prompt_length": 100,
+                "reasoning_sophistication": 0.1,
+            },
+            {
+                "combined_score": 0.5,
+                "prompt_length": 300,
+                "reasoning_sophistication": 0.5,
+            },
+            {
+                "combined_score": 0.8,
+                "prompt_length": 500,
+                "reasoning_sophistication": 0.9,
+            },
         ]
 
         for i, metrics in enumerate(test_cases):
@@ -103,16 +115,22 @@ class TestGridStability(unittest.TestCase):
             current_stats = db2.feature_stats[dim]
 
             self.assertLessEqual(
-                current_stats["min"], original_range["min"], f"Min range contracted for {dim}"
+                current_stats["min"],
+                original_range["min"],
+                f"Min range contracted for {dim}",
             )
             self.assertGreaterEqual(
-                current_stats["max"], original_range["max"], f"Max range contracted for {dim}"
+                current_stats["max"],
+                original_range["max"],
+                f"Max range contracted for {dim}",
             )
 
     def test_grid_expansion_behavior(self):
         """Test that grid expands correctly when new programs exceed existing ranges"""
         config = DatabaseConfig(
-            db_path=self.test_dir, feature_dimensions=["score", "execution_time"], feature_bins=5
+            db_path=self.test_dir,
+            feature_dimensions=["score", "execution_time"],
+            feature_bins=5,
         )
 
         # Phase 1: Establish initial range
@@ -146,8 +164,12 @@ class TestGridStability(unittest.TestCase):
         # Verify ranges were preserved
         self.assertAlmostEqual(db2.feature_stats["score"]["min"], original_score_min)
         self.assertAlmostEqual(db2.feature_stats["score"]["max"], original_score_max)
-        self.assertAlmostEqual(db2.feature_stats["execution_time"]["min"], original_time_min)
-        self.assertAlmostEqual(db2.feature_stats["execution_time"]["max"], original_time_max)
+        self.assertAlmostEqual(
+            db2.feature_stats["execution_time"]["min"], original_time_min
+        )
+        self.assertAlmostEqual(
+            db2.feature_stats["execution_time"]["max"], original_time_max
+        )
 
         # Add program outside existing range
         expansion_program = Program(
@@ -164,13 +186,17 @@ class TestGridStability(unittest.TestCase):
         # Verify ranges expanded appropriately
         self.assertLessEqual(db2.feature_stats["score"]["min"], original_score_min)
         self.assertGreaterEqual(db2.feature_stats["score"]["max"], 0.9)
-        self.assertLessEqual(db2.feature_stats["execution_time"]["min"], original_time_min)
+        self.assertLessEqual(
+            db2.feature_stats["execution_time"]["min"], original_time_min
+        )
         self.assertGreaterEqual(db2.feature_stats["execution_time"]["max"], 50)
 
     def test_feature_stats_consistency_across_cycles(self):
         """Test that feature_stats remain consistent across multiple save/load cycles"""
         config = DatabaseConfig(
-            db_path=self.test_dir, feature_dimensions=["score", "memory_usage"], feature_bins=4
+            db_path=self.test_dir,
+            feature_dimensions=["score", "memory_usage"],
+            feature_bins=4,
         )
 
         # Initial program to establish baseline
@@ -238,7 +264,9 @@ class TestGridStability(unittest.TestCase):
     def test_feature_stats_accumulation(self):
         """Test that feature_stats accumulate correctly across checkpoint cycles"""
         config = DatabaseConfig(
-            db_path=self.test_dir, feature_dimensions=["score", "complexity"], feature_bins=10
+            db_path=self.test_dir,
+            feature_dimensions=["score", "complexity"],
+            feature_bins=10,
         )
 
         # Cycle 1: Initial programs

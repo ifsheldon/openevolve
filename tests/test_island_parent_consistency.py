@@ -18,7 +18,10 @@ class TestIslandParentConsistency(unittest.TestCase):
 
         # Create initial program on island 0
         initial_program = Program(
-            id="initial", code="def initial(): pass", metrics={"score": 0.5}, iteration_found=0
+            id="initial",
+            code="def initial(): pass",
+            metrics={"score": 0.5},
+            iteration_found=0,
         )
         database.add(initial_program)  # Should go to island 0 (current_island)
 
@@ -88,7 +91,7 @@ class TestIslandParentConsistency(unittest.TestCase):
                 prog = Program(
                     id=f"prog_{i}",
                     code=f"def prog_{i}():\n{padding}    return {i * 100}",
-                    parent_id=f"prog_{i-1}",
+                    parent_id=f"prog_{i - 1}",
                     metrics={"score": 0.1 * i},
                     iteration_found=i,
                 )
@@ -126,7 +129,7 @@ class TestIslandParentConsistency(unittest.TestCase):
                 self.assertEqual(
                     island_id,
                     prog.metadata.get("island"),
-                    f"Program {prog_id} in island {island_id} should have matching metadata"
+                    f"Program {prog_id} in island {island_id} should have matching metadata",
                 )
 
     def test_explicit_migration_override(self):
@@ -137,7 +140,10 @@ class TestIslandParentConsistency(unittest.TestCase):
 
         # Create parent on island 0
         parent = Program(
-            id="parent", code="def parent(): pass", metrics={"score": 0.5}, iteration_found=0
+            id="parent",
+            code="def parent(): pass",
+            metrics={"score": 0.5},
+            iteration_found=0,
         )
         database.add(parent)  # Goes to island 0
         self.assertIn("parent", database.islands[0])

@@ -13,7 +13,13 @@ from concurrent.futures import Future
 # Set dummy API key for testing
 os.environ["OPENAI_API_KEY"] = "test"
 
-from openevolve.config import Config, DatabaseConfig, EvaluatorConfig, LLMConfig, PromptConfig
+from openevolve.config import (
+    Config,
+    DatabaseConfig,
+    EvaluatorConfig,
+    LLMConfig,
+    PromptConfig,
+)
 from openevolve.database import Program, ProgramDatabase
 from openevolve.process_parallel import ProcessParallelController, SerializableResult
 
@@ -65,7 +71,9 @@ def evaluate(program_path):
 
     def test_controller_initialization(self):
         """Test that controller initializes correctly"""
-        controller = ProcessParallelController(self.config, self.eval_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.eval_file, self.database
+        )
 
         self.assertEqual(controller.num_workers, 2)
         self.assertIsNone(controller.executor)
@@ -73,7 +81,9 @@ def evaluate(program_path):
 
     def test_controller_start_stop(self):
         """Test starting and stopping the controller"""
-        controller = ProcessParallelController(self.config, self.eval_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.eval_file, self.database
+        )
 
         # Start controller
         controller.start()
@@ -86,7 +96,9 @@ def evaluate(program_path):
 
     def test_database_snapshot_creation(self):
         """Test creating database snapshot for workers"""
-        controller = ProcessParallelController(self.config, self.eval_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.eval_file, self.database
+        )
 
         snapshot = controller._create_database_snapshot()
 
@@ -107,7 +119,9 @@ def evaluate(program_path):
         """Test basic evolution run"""
 
         async def run_test():
-            controller = ProcessParallelController(self.config, self.eval_file, self.database)
+            controller = ProcessParallelController(
+                self.config, self.eval_file, self.database
+            )
 
             # Mock the executor to avoid actually spawning processes
             with patch.object(controller, "_submit_iteration") as mock_submit:
@@ -155,7 +169,9 @@ def evaluate(program_path):
 
     def test_request_shutdown(self):
         """Test graceful shutdown request"""
-        controller = ProcessParallelController(self.config, self.eval_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.eval_file, self.database
+        )
 
         # Request shutdown
         controller.request_shutdown()

@@ -93,7 +93,10 @@ def calculate_prompt_features(prompt):
     has_cot = (
         "step by step" in prompt_lower
         or "step-by-step" in prompt_lower
-        or any(phrase in prompt_lower for phrase in ["think through", "reasoning", "explain your"])
+        or any(
+            phrase in prompt_lower
+            for phrase in ["think through", "reasoning", "explain your"]
+        )
         or bool(re.search(r"(first|then|next|finally)", prompt_lower))
     )
 
@@ -141,7 +144,9 @@ def load_prompt_config(prompt_path):
 
     # Load the configuration (already determined from environment variable)
     if not os.path.exists(DATASET_CONFIG_PATH):
-        raise FileNotFoundError(f"Dataset configuration not found: {DATASET_CONFIG_PATH}")
+        raise FileNotFoundError(
+            f"Dataset configuration not found: {DATASET_CONFIG_PATH}"
+        )
 
     with open(DATASET_CONFIG_PATH, "r") as f:
         config = yaml.safe_load(f)
@@ -154,7 +159,9 @@ def load_hf_dataset(config):
     dataset_name = config["dataset_name"]
     dataset_config = config.get("dataset_config", None)
     split = config.get("split", "test")
-    trust_remote_code = config.get("trust_remote_code", True)  # Default to True for convenience
+    trust_remote_code = config.get(
+        "trust_remote_code", True
+    )  # Default to True for convenience
 
     print(f"Loading dataset: {dataset_name}")
 
@@ -178,7 +185,10 @@ def load_hf_dataset(config):
             )
         else:
             dataset = load_dataset(
-                dataset_name, split=split, trust_remote_code=trust_remote_code, streaming=streaming
+                dataset_name,
+                split=split,
+                trust_remote_code=trust_remote_code,
+                streaming=streaming,
             )
     except:
         # Fallback to train split if test is not available
@@ -225,7 +235,9 @@ def evaluate_prompt(prompt, dataset, config, num_samples):
     if hasattr(dataset, "take"):
         # Streaming dataset
         samples = dataset.take(num_samples)
-        sample_iter = tqdm(samples, desc=f"Evaluating {num_samples} samples", total=num_samples)
+        sample_iter = tqdm(
+            samples, desc=f"Evaluating {num_samples} samples", total=num_samples
+        )
     else:
         # Non-streaming dataset
         indices = range(min(num_samples, len(dataset)))
@@ -249,9 +261,11 @@ def evaluate_prompt(prompt, dataset, config, num_samples):
                 for i, (title, sentences) in enumerate(
                     zip(context_items["title"], context_items["sentences"])
                 ):
-                    context_text += f"Paragraph {i+1} ({title}):\n"
+                    context_text += f"Paragraph {i + 1} ({title}):\n"
                     context_text += " ".join(sentences) + "\n\n"
-            formatted_prompt = prompt.format(context=context_text.strip(), question=input_text)
+            formatted_prompt = prompt.format(
+                context=context_text.strip(), question=input_text
+            )
         elif is_ifeval:
             # IFEval uses 'prompt' field directly
             formatted_prompt = prompt.format(instruction=input_text)
@@ -316,7 +330,9 @@ def evaluate_prompt(prompt, dataset, config, num_samples):
                 try:
                     expected_number = float(expected_answer.replace(",", ""))
                 except:
-                    print(f"Warning: Could not parse expected answer: {expected_answer}")
+                    print(
+                        f"Warning: Could not parse expected answer: {expected_answer}"
+                    )
                     total += 1
                     continue
 
@@ -483,7 +499,9 @@ def evaluate_stage1(prompt_path):
         print(f"Stage 1: Evaluating {stage1_samples} samples...")
 
         # Run evaluation
-        accuracy, correct, total = evaluate_prompt(prompt, dataset, config, stage1_samples)
+        accuracy, correct, total = evaluate_prompt(
+            prompt, dataset, config, stage1_samples
+        )
 
         print(f"Stage 1 accuracy: {accuracy:.3f} ({correct}/{total})")
         print("-" * 80)
@@ -510,7 +528,9 @@ def evaluate_stage1(prompt_path):
             # Try to calculate features from the failed prompt
             with open(prompt_path, "r") as f:
                 failed_prompt = f.read().strip()
-            prompt_length, reasoning_sophistication = calculate_prompt_features(failed_prompt)
+            prompt_length, reasoning_sophistication = calculate_prompt_features(
+                failed_prompt
+            )
         except:
             # Fallback values if prompt can't be read
             prompt_length, reasoning_sophistication = 0, 0.0
@@ -553,7 +573,9 @@ def evaluate_stage2(prompt_path):
         print(f"Stage 2: Evaluating {stage2_samples} samples...")
 
         # Run evaluation
-        accuracy, correct, total = evaluate_prompt(prompt, dataset, config, stage2_samples)
+        accuracy, correct, total = evaluate_prompt(
+            prompt, dataset, config, stage2_samples
+        )
 
         print(f"Stage 2 accuracy: {accuracy:.3f} ({correct}/{total})")
         print("-" * 80)
@@ -580,7 +602,9 @@ def evaluate_stage2(prompt_path):
             # Try to calculate features from the failed prompt
             with open(prompt_path, "r") as f:
                 failed_prompt = f.read().strip()
-            prompt_length, reasoning_sophistication = calculate_prompt_features(failed_prompt)
+            prompt_length, reasoning_sophistication = calculate_prompt_features(
+                failed_prompt
+            )
         except:
             # Fallback values if prompt can't be read
             prompt_length, reasoning_sophistication = 0, 0.0

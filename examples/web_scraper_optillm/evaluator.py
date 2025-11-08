@@ -62,7 +62,9 @@ def evaluate(program_path: str) -> Dict:
                 # Test parameter extraction
                 for doc in docs:
                     if "parameters" not in doc:
-                        doc["parameters"] = program.extract_parameters(doc.get("signature", ""))
+                        doc["parameters"] = program.extract_parameters(
+                            doc.get("signature", "")
+                        )
 
                 # Test formatting
                 formatted = program.format_documentation(docs)
@@ -83,13 +85,17 @@ def evaluate(program_path: str) -> Dict:
         if total_expected > 0:
             metrics["accuracy"] = total_correct / total_expected
 
-        metrics["completeness"] = min(1.0, total_correct / 20)  # Expect ~20 functions total
+        metrics["completeness"] = min(
+            1.0, total_correct / 20
+        )  # Expect ~20 functions total
         metrics["robustness"] = max(0.0, 1.0 - (parsing_errors / len(test_cases)))
         metrics["parsing_errors"] = parsing_errors / len(test_cases)
 
         # Overall score - use 'combined_score' as primary metric for evolution
         metrics["combined_score"] = (
-            metrics["accuracy"] * 0.4 + metrics["completeness"] * 0.3 + metrics["robustness"] * 0.3
+            metrics["accuracy"] * 0.4
+            + metrics["completeness"] * 0.3
+            + metrics["robustness"] * 0.3
         )
 
         # Add detailed feedback for the LLM
@@ -320,7 +326,9 @@ def generate_feedback(metrics: Dict[str, float], artifacts: Dict[str, Any]) -> s
 
     # Accuracy feedback
     if metrics["accuracy"] < 0.5:
-        feedback.append("⚠️ **Low Accuracy**: The scraper is missing many expected functions.")
+        feedback.append(
+            "⚠️ **Low Accuracy**: The scraper is missing many expected functions."
+        )
         feedback.append(
             "Consider improving the HTML parsing logic to handle different documentation formats."
         )
@@ -328,22 +336,30 @@ def generate_feedback(metrics: Dict[str, float], artifacts: Dict[str, Any]) -> s
             "Look for patterns like <dl class='function'>, <div class='function'>, and <code> tags."
         )
     elif metrics["accuracy"] < 0.8:
-        feedback.append("✅ **Good Accuracy**: Most functions are found, but some are missed.")
+        feedback.append(
+            "✅ **Good Accuracy**: Most functions are found, but some are missed."
+        )
         feedback.append("Fine-tune the extraction logic for edge cases.")
     else:
-        feedback.append("🎉 **Excellent Accuracy**: Function extraction is working well!")
+        feedback.append(
+            "🎉 **Excellent Accuracy**: Function extraction is working well!"
+        )
 
     feedback.append("")
 
     # Completeness feedback
     if metrics["completeness"] < 0.5:
-        feedback.append("⚠️ **Low Completeness**: Not extracting enough functions overall.")
+        feedback.append(
+            "⚠️ **Low Completeness**: Not extracting enough functions overall."
+        )
         feedback.append("Increase the limit or improve the search scope.")
 
     # Robustness feedback
     if metrics["robustness"] < 0.8:
         feedback.append("⚠️ **Low Robustness**: The scraper fails on some HTML formats.")
-        feedback.append("Add try-catch blocks and handle different documentation structures.")
+        feedback.append(
+            "Add try-catch blocks and handle different documentation structures."
+        )
         feedback.append("Consider multiple parsing strategies and fallback methods.")
 
     # Specific improvements
@@ -366,6 +382,8 @@ def generate_feedback(metrics: Dict[str, float], artifacts: Dict[str, Any]) -> s
     feedback.append("For improving parsing, refer to these documentation structures:")
     feedback.append("- Python docs: https://docs.python.org/3/library/json.html")
     feedback.append("- Requests docs: https://requests.readthedocs.io/en/latest/api/")
-    feedback.append("- BeautifulSoup docs: https://www.crummy.com/software/BeautifulSoup/bs4/doc/")
+    feedback.append(
+        "- BeautifulSoup docs: https://www.crummy.com/software/BeautifulSoup/bs4/doc/"
+    )
 
     return "\n".join(feedback)

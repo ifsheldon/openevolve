@@ -119,7 +119,9 @@ class TestPromptSamplerComprehensive(unittest.TestCase):
         ]
 
         # Call without feature_dimensions (should use default of None)
-        result = self.prompt_sampler._format_inspirations_section(inspirations, "python")
+        result = self.prompt_sampler._format_inspirations_section(
+            inspirations, "python"
+        )
 
         self.assertIsInstance(result, str)
         self.assertIn("another_func", result)
@@ -136,7 +138,9 @@ class TestPromptSamplerComprehensive(unittest.TestCase):
             program, feature_dimensions=["complexity", "memory_usage"]
         )
 
-        self.assertEqual(program_type, "High-Performer")  # Based on combined_score of 0.85
+        self.assertEqual(
+            program_type, "High-Performer"
+        )  # Based on combined_score of 0.85
 
     def test_extract_unique_features_calls_determine_program_type(self):
         """Test that _extract_unique_features correctly handles program_type determination"""
@@ -157,11 +161,19 @@ class TestPromptSamplerComprehensive(unittest.TestCase):
         current_program = "def main(): pass"
 
         # Comprehensive test data
-        previous_programs = [{"id": "prev1", "code": "def v1(): pass", "metrics": {"score": 0.3}}]
-        top_programs = [
-            {"id": "top1", "code": "def best(): pass", "metrics": {"combined_score": 0.95}}
+        previous_programs = [
+            {"id": "prev1", "code": "def v1(): pass", "metrics": {"score": 0.3}}
         ]
-        inspirations = [{"id": "insp1", "code": "def creative(): pass", "metrics": {"score": 0.6}}]
+        top_programs = [
+            {
+                "id": "top1",
+                "code": "def best(): pass",
+                "metrics": {"combined_score": 0.95},
+            }
+        ]
+        inspirations = [
+            {"id": "insp1", "code": "def creative(): pass", "metrics": {"score": 0.6}}
+        ]
 
         prompt = self.prompt_sampler.build_prompt(
             current_program=current_program,
@@ -255,7 +267,12 @@ class TestPromptSamplerComprehensive(unittest.TestCase):
 
     def test_feature_coordinates_formatting_in_prompt(self):
         """Test that feature coordinates are formatted correctly in the prompt"""
-        metrics = {"combined_score": 0.75, "complexity": 8, "memory_usage": 150, "cpu_usage": 0.3}
+        metrics = {
+            "combined_score": 0.75,
+            "complexity": 8,
+            "memory_usage": 150,
+            "cpu_usage": 0.3,
+        }
 
         prompt = self.prompt_sampler.build_prompt(
             current_program="def test(): pass",

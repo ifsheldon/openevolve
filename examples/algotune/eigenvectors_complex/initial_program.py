@@ -53,29 +53,31 @@ Consider these algorithmic improvements for significant performance gains:
 This is the initial implementation that will be evolved by OpenEvolve.
 The solve method will be improved through evolution.
 """
+
 import logging
 import random
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any, Dict, List, Optional
 
+
 class EigenvectorsComplex:
     """
     Initial implementation of eigenvectors_complex task.
     This will be evolved by OpenEvolve to improve performance and correctness.
     """
-    
+
     def __init__(self):
         """Initialize the EigenvectorsComplex."""
         pass
-    
+
     def solve(self, problem):
         """
         Solve the eigenvectors_complex problem.
-        
+
         Args:
             problem: Dictionary containing problem data specific to eigenvectors_complex
-                   
+
         Returns:
             The solution in the format expected by the task
         """
@@ -103,19 +105,19 @@ class EigenvectorsComplex:
                     vec_arr = vec_arr / norm
                 sorted_evecs.append(vec_arr.tolist())
             return sorted_evecs
-            
+
         except Exception as e:
             logging.error(f"Error in solve method: {e}")
             raise e
-    
+
     def is_solution(self, problem, solution):
         """
         Check if the provided solution is valid.
-        
+
         Args:
             problem: The original problem
             solution: The proposed solution
-                   
+
         Returns:
             True if the solution is valid, False otherwise
         """
@@ -144,7 +146,9 @@ class EigenvectorsComplex:
                 return False
             for i, vec in enumerate(solution):
                 if not isinstance(vec, list) or len(vec) != n:
-                    logging.error(f"Eigenvector at index {i} is not a list of length {n}.")
+                    logging.error(
+                        f"Eigenvector at index {i} is not a list of length {n}."
+                    )
                     return False
                 vec_arr = np.array(vec, dtype=complex)
                 if not np.isclose(np.linalg.norm(vec_arr), 1.0, atol=tol):
@@ -165,34 +169,42 @@ class EigenvectorsComplex:
                 # Align phase: compute phase factor using inner product
                 inner = np.vdot(ref_vec, cand_vec)
                 if np.abs(inner) < 1e-12:
-                    logging.error("Inner product is nearly zero, cannot determine phase alignment.")
+                    logging.error(
+                        "Inner product is nearly zero, cannot determine phase alignment."
+                    )
                     return False
                 phase = inner / np.abs(inner)
                 aligned = cand_vec * np.conj(phase)
-                error = np.linalg.norm(aligned - ref_vec) / (np.linalg.norm(ref_vec) + 1e-12)
+                error = np.linalg.norm(aligned - ref_vec) / (
+                    np.linalg.norm(ref_vec) + 1e-12
+                )
                 max_rel_error = max(max_rel_error, error)
             if max_rel_error > tol:
-                logging.error(f"Maximum relative error {max_rel_error} exceeds tolerance {tol}.")
+                logging.error(
+                    f"Maximum relative error {max_rel_error} exceeds tolerance {tol}."
+                )
                 return False
             return True
-            
+
         except Exception as e:
             logging.error(f"Error in is_solution method: {e}")
             return False
+
 
 def run_solver(problem):
     """
     Main function to run the solver.
     This function is used by the evaluator to test the evolved solution.
-    
+
     Args:
         problem: The problem to solve
-        
+
     Returns:
         The solution
     """
     solver = EigenvectorsComplex()
     return solver.solve(problem)
+
 
 # EVOLVE-BLOCK-END
 

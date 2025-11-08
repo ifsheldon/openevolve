@@ -44,11 +44,15 @@ class OpenEvolve(LM):
 
         # folder must match prompt:template_dir in config.yml!
         self.prompt_path = "examples/lm_eval/prompts/system_message.txt"
-        self.evaluator_prompt_path = "examples/lm_eval/prompts/evaluator_system_message.txt"
+        self.evaluator_prompt_path = (
+            "examples/lm_eval/prompts/evaluator_system_message.txt"
+        )
         self.best_path = "examples/lm_eval/openevolve_output/best/best_program.txt"
         self.base_system_message = "You are an expert task solver, with a lot of commonsense, math, language and coding knowledge.\n\nConsider this task:\n```{prompt}´´´"
 
-    def generate(self, prompts: List[str], max_gen_toks: int = None, stop=None, **kwargs):
+    def generate(
+        self, prompts: List[str], max_gen_toks: int = None, stop=None, **kwargs
+    ):
         outs = []
         for prompt in prompts:
             # Task prompt becomes the system message. User prompt is the evolutionary logic.
@@ -140,14 +144,18 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser(
         description="OpenEvolve <-> lm-evaluation-harness adapter.",
     )
-    p.add_argument("--config", default="examples/lm_eval/config.yml", help="config file")
+    p.add_argument(
+        "--config", default="examples/lm_eval/config.yml", help="config file"
+    )
     p.add_argument(
         "--init_file",
         default="examples/lm_eval/initial_content_stub.txt",
         help="initial content file",
     )
     p.add_argument(
-        "--evaluator_file", default="examples/lm_eval/evaluator_stub.py", help="evaluator file"
+        "--evaluator_file",
+        default="examples/lm_eval/evaluator_stub.py",
+        help="evaluator file",
     )
     p.add_argument("--iterations", default=5, type=int, help="number of iterations")
     p.add_argument(

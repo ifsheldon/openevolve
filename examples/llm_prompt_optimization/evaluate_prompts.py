@@ -68,7 +68,9 @@ def evaluate_ifeval(client, prompt_template, num_samples, model):
         print(f"Using {samples_to_process} samples from {split_used} split")
         dataset = load_dataset("google/IFEval", split=split_used, streaming=True)
         dataset_iter = tqdm(
-            dataset.take(samples_to_process), total=samples_to_process, desc="Evaluating"
+            dataset.take(samples_to_process),
+            total=samples_to_process,
+            desc="Evaluating",
         )
 
     correct = 0
@@ -146,9 +148,13 @@ def evaluate_hover(client, prompt_template, num_samples, model):
     else:
         samples_to_process = min(num_samples, len(dataset))
         print(f"Using {samples_to_process} samples from {split_used} split")
-        dataset = load_dataset("hover", split=split_used, streaming=True, trust_remote_code=True)
+        dataset = load_dataset(
+            "hover", split=split_used, streaming=True, trust_remote_code=True
+        )
         dataset_iter = tqdm(
-            dataset.take(samples_to_process), total=samples_to_process, desc="Evaluating"
+            dataset.take(samples_to_process),
+            total=samples_to_process,
+            desc="Evaluating",
         )
 
     correct = 0
@@ -222,7 +228,10 @@ def evaluate_hotpotqa(client, prompt_template, num_samples, model):
         split_used = "test"
     except:
         dataset = load_dataset(
-            "hotpotqa/hotpot_qa", "distractor", split="validation", trust_remote_code=True
+            "hotpotqa/hotpot_qa",
+            "distractor",
+            split="validation",
+            trust_remote_code=True,
         )
         split_used = "validation"
 
@@ -299,7 +308,9 @@ def evaluate_hotpotqa(client, prompt_template, num_samples, model):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Evaluate prompts on GEPA benchmark datasets")
+    parser = argparse.ArgumentParser(
+        description="Evaluate prompts on GEPA benchmark datasets"
+    )
     parser.add_argument(
         "--dataset",
         type=str,
@@ -324,7 +335,10 @@ def main():
         "--model", type=str, default="qwen/qwen3-8b", help="Model to use for evaluation"
     )
     parser.add_argument(
-        "--output", type=str, default=None, help="Output file for results (default: auto-generated)"
+        "--output",
+        type=str,
+        default=None,
+        help="Output file for results (default: auto-generated)",
     )
 
     args = parser.parse_args()
@@ -339,7 +353,11 @@ def main():
         datasets = [args.dataset]
 
     # Evaluation functions
-    eval_funcs = {"ifeval": evaluate_ifeval, "hover": evaluate_hover, "hotpotqa": evaluate_hotpotqa}
+    eval_funcs = {
+        "ifeval": evaluate_ifeval,
+        "hover": evaluate_hover,
+        "hotpotqa": evaluate_hotpotqa,
+    }
 
     # Load baseline results for comparison
     baseline_results = {}
@@ -352,14 +370,14 @@ def main():
     # Store results
     all_results = []
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"PROMPT EVALUATION - {args.prompt_type.upper()}")
     print(f"Model: {args.model}")
     if args.samples:
         print(f"Samples per dataset: {args.samples}")
     else:
         print(f"Samples per dataset: Full dataset")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     for dataset_name in datasets:
         print(f"\nEvaluating {dataset_name.upper()}...")
@@ -406,7 +424,9 @@ def main():
                 print(f"  Baseline: {baseline_acc:.3f}")
                 print(f"  Improvement: {improvement:+.1f}%")
             print(f"  Empty responses: {empty_responses}")
-            print(f"  Time: {elapsed_time:.1f}s ({elapsed_time/total:.1f}s per sample)")
+            print(
+                f"  Time: {elapsed_time:.1f}s ({elapsed_time / total:.1f}s per sample)"
+            )
 
         except Exception as e:
             print(f"Error evaluating {dataset_name}: {str(e)}")
@@ -451,9 +471,9 @@ def main():
         json.dump(final_results, f, indent=2)
 
     # Print summary
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("EVALUATION SUMMARY")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     for result in all_results:
         if "error" not in result:
@@ -464,7 +484,9 @@ def main():
 
     if "summary" in final_results:
         print(f"\nAGGREGATE:")
-        print(f"  Overall Accuracy: {final_results['summary']['aggregate_accuracy']:.3f}")
+        print(
+            f"  Overall Accuracy: {final_results['summary']['aggregate_accuracy']:.3f}"
+        )
         print(f"  Total Samples: {final_results['summary']['total_samples']}")
 
     print(f"\nResults saved to: {output_path}")

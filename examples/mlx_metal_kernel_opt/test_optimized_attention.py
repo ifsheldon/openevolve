@@ -225,7 +225,9 @@ def run_mlx_lm_generation(
                     prompt_speed = float(parts[1].strip().split()[0])
                     found_prompt_stats = True
                     if debug:
-                        print(f"Found prompt stats: {prompt_tokens} tokens, {prompt_speed} tok/sec")
+                        print(
+                            f"Found prompt stats: {prompt_tokens} tokens, {prompt_speed} tok/sec"
+                        )
                 except (ValueError, IndexError) as e:
                     if debug:
                         print(f"Failed to parse prompt line: {e}")
@@ -298,9 +300,9 @@ def run_comparison_test(
     prompt: str, custom_attention_class, max_tokens: int = 1000, debug: bool = False
 ):
     """Run comparison test between standard and optimized attention"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("🔬 ATTENTION COMPARISON TEST")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"Prompt: {prompt}")
     print(f"Max tokens: {max_tokens}")
     print()
@@ -335,7 +337,9 @@ def run_comparison_test(
 
         # Ask user if they want to continue
         try:
-            response = input("\n❓ Continue with optimized test anyway? (y/n): ").lower()
+            response = input(
+                "\n❓ Continue with optimized test anyway? (y/n): "
+            ).lower()
             if response != "y":
                 print("Test cancelled")
                 return
@@ -369,7 +373,10 @@ def run_comparison_test(
         # Calculate improvements (handle division by zero)
         if standard_result["generation_speed"] > 0:
             speed_improvement = (
-                (optimized_result["generation_speed"] - standard_result["generation_speed"])
+                (
+                    optimized_result["generation_speed"]
+                    - standard_result["generation_speed"]
+                )
                 / standard_result["generation_speed"]
             ) * 100
         else:
@@ -400,7 +407,10 @@ def run_comparison_test(
             print("🎯 SIGNIFICANT IMPROVEMENT achieved!")
         elif speed_improvement > 0:
             print("📈 Modest improvement achieved")
-        elif standard_result["generation_speed"] == 0 and optimized_result["generation_speed"] > 0:
+        elif (
+            standard_result["generation_speed"] == 0
+            and optimized_result["generation_speed"] > 0
+        ):
             print("🔥 Optimized version works where standard failed!")
         else:
             print("⚠️  No improvement or regression")
@@ -422,11 +432,17 @@ def run_comparison_test(
         print(f"Optimized: {opt_text}...")
 
         if standard_result["generated_text"] and optimized_result["generated_text"]:
-            if standard_result["generated_text"][:100] == optimized_result["generated_text"][:100]:
+            if (
+                standard_result["generated_text"][:100]
+                == optimized_result["generated_text"][:100]
+            ):
                 print("✅ Generated text is identical (good!)")
             else:
                 print("⚠️  Generated text differs (check randomness/temperature)")
-        elif not standard_result["generated_text"] and not optimized_result["generated_text"]:
+        elif (
+            not standard_result["generated_text"]
+            and not optimized_result["generated_text"]
+        ):
             print("⚠️  Both versions generated no text")
         else:
             print("ℹ️  Different text generation behavior")
@@ -440,10 +456,16 @@ def main():
     parser = argparse.ArgumentParser(description="Test optimized MLX attention kernel")
     parser.add_argument("program_path", nargs="?", help="Path to best_program.py")
     parser.add_argument(
-        "--prompt", default="The future of artificial intelligence is", help="Test prompt"
+        "--prompt",
+        default="The future of artificial intelligence is",
+        help="Test prompt",
     )
-    parser.add_argument("--max-tokens", type=int, default=100, help="Maximum tokens to generate")
-    parser.add_argument("--model", default="mlx-community/Qwen3-0.6B-bf16", help="Model to use")
+    parser.add_argument(
+        "--max-tokens", type=int, default=100, help="Maximum tokens to generate"
+    )
+    parser.add_argument(
+        "--model", default="mlx-community/Qwen3-0.6B-bf16", help="Model to use"
+    )
     parser.add_argument("--debug", action="store_true", help="Enable debug output")
 
     args = parser.parse_args()
@@ -484,9 +506,11 @@ def main():
         sys.exit(1)
 
     # Run comparison test
-    run_comparison_test(args.prompt, custom_attention_class, args.max_tokens, debug=args.debug)
+    run_comparison_test(
+        args.prompt, custom_attention_class, args.max_tokens, debug=args.debug
+    )
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("✅ Test completed!")
     print("💡 To test with a different prompt:")
     print(f"   python {sys.argv[0]} --prompt 'Your custom prompt here'")

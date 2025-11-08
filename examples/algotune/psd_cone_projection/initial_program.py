@@ -65,27 +65,29 @@ Consider these algorithmic improvements for better performance:
 This is the initial implementation that will be evolved by OpenEvolve.
 The solve method will be improved through evolution.
 """
+
 import logging
 import numpy as np
 from typing import Any, Dict, List, Optional
+
 
 class PSDConeProjection:
     """
     Initial implementation of psd_cone_projection task.
     This will be evolved by OpenEvolve to improve performance and correctness.
     """
-    
+
     def __init__(self):
         """Initialize the PSDConeProjection."""
         pass
-    
+
     def solve(self, problem):
         """
         Solve the psd_cone_projection problem.
-        
+
         Args:
             problem: Dictionary containing problem data specific to psd_cone_projection
-                   
+
         Returns:
             The solution in the format expected by the task
         """
@@ -107,19 +109,19 @@ class PSDConeProjection:
             eigvals = np.maximum(eigvals, 0)
             X = eigvecs @ np.diag(eigvals) @ eigvecs.T
             return {"X": X}
-            
+
         except Exception as e:
             logging.error(f"Error in solve method: {e}")
             raise e
-    
+
     def is_solution(self, problem, solution):
         """
         Check if the provided solution is valid.
-        
+
         Args:
             problem: The original problem
             solution: The proposed solution
-                   
+
         Returns:
             True if the solution is valid, False otherwise
         """
@@ -166,31 +168,35 @@ class PSDConeProjection:
             # 3. Test the optimality of objective value
             objective_proposed = np.sum((A - proposed_X) ** 2)
             objective_reference = np.sum((A - reference_X) ** 2)
-            if not np.isclose(objective_proposed, objective_reference, rtol=1e-5, atol=1e-8):
+            if not np.isclose(
+                objective_proposed, objective_reference, rtol=1e-5, atol=1e-8
+            ):
                 logging.error(
                     f"Proposed solution is not optimal. Proposed objective: {objective_proposed}, Reference objective: {objective_reference}"
                 )
                 return False
             # All checks passed
             return True
-            
+
         except Exception as e:
             logging.error(f"Error in is_solution method: {e}")
             return False
+
 
 def run_solver(problem):
     """
     Main function to run the solver.
     This function is used by the evaluator to test the evolved solution.
-    
+
     Args:
         problem: The problem to solve
-        
+
     Returns:
         The solution
     """
     solver = PSDConeProjection()
     return solver.solve(problem)
+
 
 # EVOLVE-BLOCK-END
 

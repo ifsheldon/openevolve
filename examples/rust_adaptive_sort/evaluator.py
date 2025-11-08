@@ -16,7 +16,6 @@ THIS_FILE_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 logger = logging.getLogger("examples.rust_adaptive_sort.evaluator")
 
 
-
 def evaluate(program_path: str) -> EvaluationResult:
     result = asyncio.run(_evaluate(program_path))
     if "error" in result.artifacts:

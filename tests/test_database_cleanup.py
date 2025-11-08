@@ -11,7 +11,6 @@ from openevolve.database import Program, ProgramDatabase
 
 
 class TestArtifactCleanup(unittest.TestCase):
-
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "db")
@@ -52,7 +51,8 @@ class TestArtifactCleanup(unittest.TestCase):
             os.path.exists(dir_to_keep), "New artifact directory should not be deleted."
         )
         self.assertFalse(
-            os.path.exists(dir_to_delete), "Old artifact directory should have been deleted."
+            os.path.exists(dir_to_delete),
+            "Old artifact directory should have been deleted.",
         )
 
 

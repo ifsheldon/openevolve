@@ -72,7 +72,9 @@ def evaluate(program_path):
 
         # Simulate what process_parallel would do
         total_iterations = evolution_start + evolution_iterations
-        self.assertEqual(total_iterations, 21, "Total range should be 21 (1 through 20)")
+        self.assertEqual(
+            total_iterations, 21, "Total range should be 21 (1 through 20)"
+        )
 
         # Check checkpoint alignment
         expected_checkpoints = []
@@ -80,7 +82,9 @@ def evaluate(program_path):
             if i > 0 and i % config.checkpoint_interval == 0:
                 expected_checkpoints.append(i)
 
-        self.assertEqual(expected_checkpoints, [10, 20], "Checkpoints should be at 10 and 20")
+        self.assertEqual(
+            expected_checkpoints, [10, 20], "Checkpoints should be at 10 and 20"
+        )
 
     def test_resume_iteration_counting(self):
         """Test that resume correctly continues from checkpoint"""
@@ -100,7 +104,9 @@ def evaluate(program_path):
             evolution_start = 1
 
         # Verify
-        self.assertEqual(evolution_start, 11, "Evolution should continue from iteration 11")
+        self.assertEqual(
+            evolution_start, 11, "Evolution should continue from iteration 11"
+        )
         self.assertEqual(evolution_iterations, 10, "Should run 10 more iterations")
 
         # Total iterations
@@ -149,15 +155,16 @@ def evaluate(program_path):
         # Skip if optillm server not available
         try:
             import requests
+
             response = requests.get("http://localhost:8000/health", timeout=2)
             if response.status_code != 200:
                 self.skipTest("optillm server not available at localhost:8000")
         except:
             self.skipTest("optillm server not available at localhost:8000")
-        
+
         async def async_test():
             from openevolve.config import LLMModelConfig
-            
+
             config = Config()
             config.max_iterations = 8  # Smaller for stability
             config.checkpoint_interval = 4
@@ -172,7 +179,7 @@ def evaluate(program_path):
                     name="google/gemma-3-270m-it",
                     api_key="optillm",
                     api_base="http://localhost:8000/v1",
-                    weight=1.0
+                    weight=1.0,
                 )
             ]
 
@@ -186,7 +193,9 @@ def evaluate(program_path):
             # Track checkpoint calls
             checkpoint_calls = []
             original_save = controller._save_checkpoint
-            controller._save_checkpoint = lambda i: checkpoint_calls.append(i) or original_save(i)
+            controller._save_checkpoint = lambda i: checkpoint_calls.append(
+                i
+            ) or original_save(i)
 
             # Run with iterations
             await controller.run(iterations=8)
@@ -208,7 +217,9 @@ def evaluate(program_path):
                 print("Evolution succeeded - verifying checkpoint behavior")
                 # Check that if we have successful iterations, checkpoints align properly
                 expected_checkpoints = [4, 8]  # Based on interval=4, iterations=8
-                successful_checkpoints = [cp for cp in expected_checkpoints if cp in checkpoint_calls]
+                successful_checkpoints = [
+                    cp for cp in expected_checkpoints if cp in checkpoint_calls
+                ]
                 # At least final checkpoint should exist if evolution completed
                 if 8 in checkpoint_calls:
                     print("Final checkpoint found as expected")

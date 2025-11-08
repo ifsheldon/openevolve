@@ -52,30 +52,32 @@ Consider these algorithmic improvements for significant performance gains:
 This is the initial implementation that will be evolved by OpenEvolve.
 The solve method will be improved through evolution.
 """
+
 import logging
 import random
 import numpy as np
 import scipy.ndimage
 from typing import Any, Dict, List, Optional
 
+
 class AffineTransform2D:
     """
     Initial implementation of affine_transform_2d task.
     This will be evolved by OpenEvolve to improve performance and correctness.
     """
-    
+
     def __init__(self):
         """Initialize the AffineTransform2D."""
         self.order = 3
         self.mode = "constant"  # Or 'nearest', 'reflect', 'mirror', 'wrap'
-    
+
     def solve(self, problem):
         """
         Solve the affine_transform_2d problem.
-        
+
         Args:
             problem: Dictionary containing problem data specific to affine_transform_2d
-                   
+
         Returns:
             The solution in the format expected by the task
         """
@@ -103,19 +105,19 @@ class AffineTransform2D:
 
             solution = {"transformed_image": transformed_image}
             return solution
-            
+
         except Exception as e:
             logging.error(f"Error in solve method: {e}")
             raise e
-    
+
     def is_solution(self, problem, solution):
         """
         Check if the provided solution is valid.
-        
+
         Args:
             problem: The original problem
             solution: The proposed solution
-                   
+
         Returns:
             True if the solution is valid, False otherwise
         """
@@ -137,7 +139,9 @@ class AffineTransform2D:
             matrix = problem["matrix"]
 
             if not isinstance(solution, dict) or "transformed_image" not in solution:
-                logging.error("Solution format invalid: missing 'transformed_image' key.")
+                logging.error(
+                    "Solution format invalid: missing 'transformed_image' key."
+                )
                 return False
 
             proposed_list = solution["transformed_image"]
@@ -152,25 +156,32 @@ class AffineTransform2D:
             if isinstance(proposed_list, np.ndarray):
                 proposed_list = proposed_list.tolist()
 
-
             # Handle potential failure case from solve()
-            if (isinstance(proposed_list, list) and proposed_list == []) or (isinstance(proposed_list, np.ndarray) and proposed_list.size == 0):
+            if (isinstance(proposed_list, list) and proposed_list == []) or (
+                isinstance(proposed_list, np.ndarray) and proposed_list.size == 0
+            ):
                 logging.warning("Proposed solution is empty list (potential failure).")
                 # Check if reference solver also fails/produces empty-like result
                 try:
                     ref_output = scipy.ndimage.affine_transform(
                         image, matrix, order=self.order, mode=self.mode
                     )
-                    if ref_output.size == 0:  # Check if reference is also effectively empty
+                    if (
+                        ref_output.size == 0
+                    ):  # Check if reference is also effectively empty
                         logging.info(
                             "Reference solver also produced empty result. Accepting empty solution."
                         )
                         return True
                     else:
-                        logging.error("Reference solver succeeded, but proposed solution was empty.")
+                        logging.error(
+                            "Reference solver succeeded, but proposed solution was empty."
+                        )
                         return False
                 except Exception:
-                    logging.info("Reference solver also failed. Accepting empty solution.")
+                    logging.info(
+                        "Reference solver also failed. Accepting empty solution."
+                    )
                     return True  # Both failed, likely invalid input
 
             if not isinstance(proposed_list, (list, np.ndarray)):
@@ -180,18 +191,24 @@ class AffineTransform2D:
             try:
                 proposed_array = np.asarray(proposed_list, dtype=float)
             except ValueError:
-                logging.error("Could not convert 'transformed_image' list to numpy float array.")
+                logging.error(
+                    "Could not convert 'transformed_image' list to numpy float array."
+                )
                 return False
 
             # Expected output shape is usually same as input for affine_transform unless specified
             if proposed_array.shape != image.shape:
-                logging.error(f"Output shape {proposed_array.shape} != input shape {image.shape}.")
+                logging.error(
+                    f"Output shape {proposed_array.shape} != input shape {image.shape}."
+                )
                 # This might be acceptable if output_shape was used, but base case expects same shape.
                 # Adjust if the task allows different output shapes.
                 return False  # Assuming same shape output for now
 
             if not np.all(np.isfinite(proposed_array)):
-                logging.error("Proposed 'transformed_image' contains non-finite values.")
+                logging.error(
+                    "Proposed 'transformed_image' contains non-finite values."
+                )
                 return False
 
             # Re-compute reference solution
@@ -219,24 +236,26 @@ class AffineTransform2D:
 
             logging.debug("Solution verification successful.")
             return True
-            
+
         except Exception as e:
             logging.error(f"Error in is_solution method: {e}")
             return False
+
 
 def run_solver(problem):
     """
     Main function to run the solver.
     This function is used by the evaluator to test the evolved solution.
-    
+
     Args:
         problem: The problem to solve
-        
+
     Returns:
         The solution
     """
     solver = AffineTransform2D()
     return solver.solve(problem)
+
 
 # EVOLVE-BLOCK-END
 

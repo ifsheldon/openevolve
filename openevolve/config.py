@@ -41,7 +41,7 @@ class LLMModelConfig:
 
     # Reproducibility
     random_seed: Optional[int] = None
-    
+
     # Reasoning parameters
     reasoning_effort: Optional[str] = None
 
@@ -75,7 +75,7 @@ class LLMConfig(LLMModelConfig):
     primary_model_weight: float = None
     secondary_model: str = None
     secondary_model_weight: float = None
-    
+
     # Reasoning parameters (inherited from LLMModelConfig but can be overridden)
     reasoning_effort: Optional[str] = None
 
@@ -134,7 +134,9 @@ class LLMConfig(LLMModelConfig):
         }
         self.update_model_params(shared_config)
 
-    def update_model_params(self, args: Dict[str, Any], overwrite: bool = False) -> None:
+    def update_model_params(
+        self, args: Dict[str, Any], overwrite: bool = False
+    ) -> None:
         """Update model parameters for all models"""
         for model in self.models + self.evaluator_models:
             for key, value in args.items():
@@ -146,7 +148,7 @@ class LLMConfig(LLMModelConfig):
         # Clear existing models lists
         self.models = []
         self.evaluator_models = []
-        
+
         # Re-run model generation logic from __post_init__
         if self.primary_model:
             # Create primary model
@@ -271,8 +273,12 @@ class DatabaseConfig:
             "NOT pre-computed bin indices. OpenEvolve handles all scaling and binning internally."
         },
     )
-    feature_bins: Union[int, Dict[str, int]] = 10  # Can be int (all dims) or dict (per-dim)
-    diversity_reference_size: int = 20  # Size of reference set for diversity calculation
+    feature_bins: Union[int, Dict[str, int]] = (
+        10  # Can be int (all dims) or dict (per-dim)
+    )
+    diversity_reference_size: int = (
+        20  # Size of reference set for diversity calculation
+    )
 
     # Migration parameters for island-based evolution
     migration_interval: int = 50  # Migrate every N generations
@@ -290,6 +296,7 @@ class DatabaseConfig:
     novelty_llm: Optional["LLMInterface"] = None
     embedding_model: Optional[str] = None
     similarity_threshold: float = 0.99
+
 
 @dataclass
 class EvaluatorConfig:
@@ -323,7 +330,7 @@ class EvaluatorConfig:
 @dataclass
 class EvolutionTraceConfig:
     """Configuration for evolution trace logging"""
-    
+
     enabled: bool = False
     format: str = "jsonl"  # Options: "jsonl", "json", "hdf5"
     include_code: bool = False
@@ -377,7 +384,13 @@ class Config:
 
         # Update top-level fields
         for key, value in config_dict.items():
-            if key not in ["llm", "prompt", "database", "evaluator", "evolution_trace"] and hasattr(config, key):
+            if key not in [
+                "llm",
+                "prompt",
+                "database",
+                "evaluator",
+                "evolution_trace",
+            ] and hasattr(config, key):
                 setattr(config, key, value)
 
         # Update nested configs
@@ -401,7 +414,9 @@ class Config:
         if "evaluator" in config_dict:
             config.evaluator = EvaluatorConfig(**config_dict["evaluator"])
         if "evolution_trace" in config_dict:
-            config.evolution_trace = EvolutionTraceConfig(**config_dict["evolution_trace"])
+            config.evolution_trace = EvolutionTraceConfig(
+                **config_dict["evolution_trace"]
+            )
 
         return config
 

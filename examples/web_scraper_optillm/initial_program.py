@@ -126,7 +126,9 @@ def format_documentation(api_docs: List[Dict[str, any]]) -> str:
         if doc.get("parameters"):
             output.append("Parameters:")
             for param in doc["parameters"]:
-                output.append(f"  - {param['name']}: {param.get('description', 'No description')}")
+                output.append(
+                    f"  - {param['name']}: {param.get('description', 'No description')}"
+                )
 
         output.append("")  # Empty line between functions
 

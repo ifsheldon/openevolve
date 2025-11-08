@@ -33,7 +33,7 @@ class TransformedFeynmanDataModule:
             for e in ds:
                 samples = {
                     k: v[...].astype(np.float64)
-                    for k, v in sample_file[f'/lsr_transform/{e["name"]}'].items()
+                    for k, v in sample_file[f"/lsr_transform/{e['name']}"].items()
                 }
                 self.problems.append(
                     Problem(
@@ -94,7 +94,7 @@ class BaseSynthDataModule:
                 samples = {
                     k: v[...].astype(np.float64)
                     for k, v in sample_file[
-                        f'/lsr_synth/{self._dataset_identifier}/{e["name"]}'
+                        f"/lsr_synth/{self._dataset_identifier}/{e['name']}"
                     ].items()
                 }
                 self.problems.append(
@@ -146,7 +146,11 @@ class BioPopGrowthDataModule(BaseSynthDataModule):
             "BPG",
             root,
             default_symbols=["dP_dt", "t", "P"],
-            default_symbol_descs=["Population growth rate", "Time", "Population at time t"],
+            default_symbol_descs=[
+                "Population growth rate",
+                "Time",
+                "Population at time t",
+            ],
         )
 
 

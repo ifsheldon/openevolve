@@ -17,20 +17,31 @@ logger = logging.getLogger(__name__)
 
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments"""
-    parser = argparse.ArgumentParser(description="OpenEvolve - Evolutionary coding agent")
+    parser = argparse.ArgumentParser(
+        description="OpenEvolve - Evolutionary coding agent"
+    )
 
     parser.add_argument("initial_program", help="Path to the initial program file")
 
     parser.add_argument(
-        "evaluation_file", help="Path to the evaluation file containing an 'evaluate' function"
+        "evaluation_file",
+        help="Path to the evaluation file containing an 'evaluate' function",
     )
 
-    parser.add_argument("--config", "-c", help="Path to configuration file (YAML)", default=None)
-
-    parser.add_argument("--output", "-o", help="Output directory for results", default=None)
+    parser.add_argument(
+        "--config", "-c", help="Path to configuration file (YAML)", default=None
+    )
 
     parser.add_argument(
-        "--iterations", "-i", help="Maximum number of iterations", type=int, default=None
+        "--output", "-o", help="Output directory for results", default=None
+    )
+
+    parser.add_argument(
+        "--iterations",
+        "-i",
+        help="Maximum number of iterations",
+        type=int,
+        default=None,
     )
 
     parser.add_argument(
@@ -55,7 +66,9 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument("--primary-model", help="Primary LLM model name", default=None)
 
-    parser.add_argument("--secondary-model", help="Secondary LLM model name", default=None)
+    parser.add_argument(
+        "--secondary-model", help="Secondary LLM model name", default=None
+    )
 
     return parser.parse_args()
 
@@ -102,7 +115,7 @@ async def main_async() -> int:
             config.llm.rebuild_models()
             print(f"Applied CLI model overrides - active models:")
             for i, model in enumerate(config.llm.models):
-                print(f"  Model {i+1}: {model.name} (weight: {model.weight})")
+                print(f"  Model {i + 1}: {model.name} (weight: {model.weight})")
 
     # Initialize OpenEvolve
     try:

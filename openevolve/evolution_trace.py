@@ -53,7 +53,9 @@ class EvolutionTrace:
             if key in self.parent_metrics:
                 parent_val = self.parent_metrics[key]
                 child_val = self.child_metrics[key]
-                if isinstance(parent_val, (int, float)) and isinstance(child_val, (int, float)):
+                if isinstance(parent_val, (int, float)) and isinstance(
+                    child_val, (int, float)
+                ):
                     improvement[key] = child_val - parent_val
         return improvement
 
@@ -284,11 +286,15 @@ class EvolutionTracer:
                     "include_code": self.include_code,
                     "include_prompts": self.include_prompts,
                 }
-                export_traces(all_traces, self.output_path, format="hdf5", metadata=metadata)
+                export_traces(
+                    all_traces, self.output_path, format="hdf5", metadata=metadata
+                )
 
         # Log final statistics
         stats = self.get_statistics()
-        logger.info(f"Evolution tracing complete. Total traces: {stats['total_traces']}")
+        logger.info(
+            f"Evolution tracing complete. Total traces: {stats['total_traces']}"
+        )
         logger.info(f"Improvement rate: {stats['improvement_rate']:.2%}")
 
         if stats["best_improvement"]:
@@ -410,7 +416,9 @@ def extract_evolution_trace_from_checkpoint(
 
 
 def extract_full_lineage_traces(
-    checkpoint_dir: Union[str, Path], output_path: Optional[str] = None, format: str = "json"
+    checkpoint_dir: Union[str, Path],
+    output_path: Optional[str] = None,
+    format: str = "json",
 ) -> List[Dict[str, Any]]:
     """
     Extract complete evolution traces with full lineage chains and prompts/actions

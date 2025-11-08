@@ -90,20 +90,21 @@ class OpenAILLM(LLMInterface):
         # Check if this is an OpenAI reasoning model
         model_lower = str(self.model).lower()
         api_base_lower = (self.api_base or "").lower()
-        #check for official OpenAI API endpoints
+        # check for official OpenAI API endpoints
         is_openai_api = (
             api_base_lower.startswith("https://api.openai.com")
             or api_base_lower.startswith("https://eu.api.openai.com")
             or api_base_lower.startswith("https://apac.api.openai.com")
-            or api_base_lower.startswith("http://api.openai.com")  # Allow http for testing
+            or api_base_lower.startswith(
+                "http://api.openai.com"
+            )  # Allow http for testing
             or api_base_lower.startswith("http://eu.api.openai.com")
             or api_base_lower.startswith("http://apac.api.openai.com")
-       )
+        )
 
-        is_openai_reasoning_model = (
-            is_openai_api
-            and model_lower.startswith(OPENAI_REASONING_MODEL_PREFIXES)
-     ) 
+        is_openai_reasoning_model = is_openai_api and model_lower.startswith(
+            OPENAI_REASONING_MODEL_PREFIXES
+        )
 
         if is_openai_reasoning_model:
             # For OpenAI reasoning models
@@ -137,7 +138,10 @@ class OpenAILLM(LLMInterface):
         # Skip seed parameter for Google AI Studio endpoint as it doesn't support it
         seed = kwargs.get("seed", self.random_seed)
         if seed is not None:
-            if self.api_base == "https://generativelanguage.googleapis.com/v1beta/openai/":
+            if (
+                self.api_base
+                == "https://generativelanguage.googleapis.com/v1beta/openai/"
+            ):
                 logger.warning(
                     "Skipping seed parameter as Google AI Studio endpoint doesn't support it. "
                     "Reproducibility may be limited."
@@ -152,11 +156,15 @@ class OpenAILLM(LLMInterface):
 
         for attempt in range(retries + 1):
             try:
-                response = await asyncio.wait_for(self._call_api(params), timeout=timeout)
+                response = await asyncio.wait_for(
+                    self._call_api(params), timeout=timeout
+                )
                 return response
             except asyncio.TimeoutError:
                 if attempt < retries:
-                    logger.warning(f"Timeout on attempt {attempt + 1}/{retries + 1}. Retrying...")
+                    logger.warning(
+                        f"Timeout on attempt {attempt + 1}/{retries + 1}. Retrying..."
+                    )
                     await asyncio.sleep(retry_delay)
                 else:
                     logger.error(f"All {retries + 1} attempts failed with timeout")
@@ -168,7 +176,9 @@ class OpenAILLM(LLMInterface):
                     )
                     await asyncio.sleep(retry_delay)
                 else:
-                    logger.error(f"All {retries + 1} attempts failed with error: {str(e)}")
+                    logger.error(
+                        f"All {retries + 1} attempts failed with error: {str(e)}"
+                    )
                     raise
 
     async def _call_api(self, params: Dict[str, Any]) -> str:

@@ -33,7 +33,10 @@ class TestMapElitesFeatures(unittest.TestCase):
 
         # Create a test program
         test_program = Program(
-            id="test", code="def test():\n    return 42", language="python", metrics={"score": 0.7}
+            id="test",
+            code="def test():\n    return 42",
+            language="python",
+            metrics={"score": 0.7},
         )
 
         # First call should compute diversity
@@ -81,7 +84,10 @@ class TestMapElitesFeatures(unittest.TestCase):
         complexities = [100, 300, 500, 700, 900]
         for i, complexity in enumerate(complexities):
             program = Program(
-                id=f"scale_{i}", code="x" * complexity, language="python", metrics={"score": 0.5}
+                id=f"scale_{i}",
+                code="x" * complexity,
+                language="python",
+                metrics={"score": 0.5},
             )
             self.db.add(program)
 
@@ -149,7 +155,9 @@ class TestMapElitesFeatures(unittest.TestCase):
         """Test default feature dimensions are complexity and diversity"""
         config = Config()
         # Don't set feature_dimensions, use defaults
-        self.assertEqual(config.database.feature_dimensions, ["complexity", "diversity"])
+        self.assertEqual(
+            config.database.feature_dimensions, ["complexity", "diversity"]
+        )
 
     def test_diversity_cache_lru_eviction(self):
         """Test LRU eviction in diversity cache"""
@@ -285,7 +293,7 @@ class TestMapElitesFeatures(unittest.TestCase):
             language="python",
             metrics={
                 "complexity": 42.5,  # Custom complexity from evaluator (NOT code length)
-                "diversity": 99.9,   # Custom diversity from evaluator (NOT code structure)
+                "diversity": 99.9,  # Custom diversity from evaluator (NOT code structure)
                 "score": 0.8,
             },
         )
@@ -315,10 +323,16 @@ class TestMapElitesFeatures(unittest.TestCase):
         # If built-in was used for complexity, it would use len(code) = 1000
         # If built-in was used for diversity, it would calculate code structure diversity
         # With custom metrics, we should see the bins for 42.5 and 99.9
-        self.assertEqual(coords[0], expected_complexity_bin,
-                        "Custom complexity metric should override built-in code length")
-        self.assertEqual(coords[1], expected_diversity_bin,
-                        "Custom diversity metric should override built-in code diversity")
+        self.assertEqual(
+            coords[0],
+            expected_complexity_bin,
+            "Custom complexity metric should override built-in code length",
+        )
+        self.assertEqual(
+            coords[1],
+            expected_diversity_bin,
+            "Custom diversity metric should override built-in code diversity",
+        )
 
         # Additional verification: test with multiple programs to ensure consistency
         program2 = Program(
@@ -327,7 +341,7 @@ class TestMapElitesFeatures(unittest.TestCase):
             language="python",
             metrics={
                 "complexity": 10.0,  # Much lower than code length
-                "diversity": 5.0,    # Custom diversity
+                "diversity": 5.0,  # Custom diversity
                 "score": 0.6,
             },
         )

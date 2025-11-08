@@ -28,10 +28,18 @@ async def evaluate(program_path: str) -> EvaluationResult:
     try:
         # Generate test datasets with different outlier levels
         test_cases = [
-            generate_regression_data(n_samples=100, n_features=3, outlier_fraction=0.0, noise=0.1),
-            generate_regression_data(n_samples=100, n_features=3, outlier_fraction=0.1, noise=0.1),
-            generate_regression_data(n_samples=100, n_features=3, outlier_fraction=0.2, noise=0.1),
-            generate_regression_data(n_samples=200, n_features=5, outlier_fraction=0.15, noise=0.2),
+            generate_regression_data(
+                n_samples=100, n_features=3, outlier_fraction=0.0, noise=0.1
+            ),
+            generate_regression_data(
+                n_samples=100, n_features=3, outlier_fraction=0.1, noise=0.1
+            ),
+            generate_regression_data(
+                n_samples=100, n_features=3, outlier_fraction=0.2, noise=0.1
+            ),
+            generate_regression_data(
+                n_samples=200, n_features=5, outlier_fraction=0.15, noise=0.2
+            ),
         ]
 
         total_score = 0
@@ -91,12 +99,18 @@ write(jsonlite::toJSON(metrics, auto_unbox=TRUE), "results.json")
 
                 if result.returncode != 0:
                     artifacts["test_results"].append(
-                        {"test_case": i, "error": "R execution failed", "stderr": result.stderr}
+                        {
+                            "test_case": i,
+                            "error": "R execution failed",
+                            "stderr": result.stderr,
+                        }
                     )
                     continue
 
                 # Read results
-                results_path = os.path.join(os.path.dirname(test_script), "results.json")
+                results_path = os.path.join(
+                    os.path.dirname(test_script), "results.json"
+                )
                 if not os.path.exists(results_path):
                     artifacts["test_results"].append(
                         {"test_case": i, "error": "No results file produced"}
@@ -151,8 +165,12 @@ write(jsonlite::toJSON(metrics, auto_unbox=TRUE), "results.json")
                 os.unlink(test_script)
                 os.unlink(X_file.name)
                 os.unlink(y_file.name)
-                if os.path.exists(os.path.join(os.path.dirname(test_script), "results.json")):
-                    os.unlink(os.path.join(os.path.dirname(test_script), "results.json"))
+                if os.path.exists(
+                    os.path.join(os.path.dirname(test_script), "results.json")
+                ):
+                    os.unlink(
+                        os.path.join(os.path.dirname(test_script), "results.json")
+                    )
 
         # Calculate average metrics
         n_successful = len([r for r in artifacts["test_results"] if "error" not in r])
@@ -210,7 +228,9 @@ write(jsonlite::toJSON(metrics, auto_unbox=TRUE), "results.json")
         )
 
 
-def generate_regression_data(n_samples=100, n_features=3, outlier_fraction=0.1, noise=0.1):
+def generate_regression_data(
+    n_samples=100, n_features=3, outlier_fraction=0.1, noise=0.1
+):
     """Generate synthetic regression data with outliers."""
     np.random.seed(42)
 

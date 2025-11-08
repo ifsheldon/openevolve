@@ -114,7 +114,9 @@ def get_fitness_score(
     return safe_numeric_average(fitness_metrics)
 
 
-def format_feature_coordinates(metrics: Dict[str, Any], feature_dimensions: List[str]) -> str:
+def format_feature_coordinates(
+    metrics: Dict[str, Any], feature_dimensions: List[str]
+) -> str:
     """
     Format feature coordinates for display in prompts
 

@@ -26,12 +26,16 @@ class TestIslandIsolation(unittest.TestCase):
 
     def test_submit_iteration_uses_correct_island(self):
         """Test that _submit_iteration samples from the specified island"""
-        controller = ProcessParallelController(self.config, self.evaluation_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.evaluation_file, self.database
+        )
 
         # Add some test programs to different islands
         for i in range(9):
             program = Program(
-                id=f"test_prog_{i}", code=f"# Test program {i}", metrics={"combined_score": 0.5}
+                id=f"test_prog_{i}",
+                code=f"# Test program {i}",
+                metrics={"combined_score": 0.5},
             )
             island_id = i % 3
             program.metadata["island"] = island_id
@@ -63,7 +67,9 @@ class TestIslandIsolation(unittest.TestCase):
 
     def test_island_isolation_during_evolution(self):
         """Test that parallel workers maintain island isolation"""
-        controller = ProcessParallelController(self.config, self.evaluation_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.evaluation_file, self.database
+        )
 
         # Track which islands were sampled
         sampled_islands = []
@@ -75,7 +81,9 @@ class TestIslandIsolation(unittest.TestCase):
             mock_program = Program(id="mock", code="", metrics={})
             return mock_program, []
 
-        with patch.object(self.database, "sample_from_island", side_effect=mock_sample_from_island):
+        with patch.object(
+            self.database, "sample_from_island", side_effect=mock_sample_from_island
+        ):
             with patch.object(controller, "executor"):
                 # Submit iterations for different islands
                 controller._submit_iteration(1, island_id=0)
@@ -88,12 +96,16 @@ class TestIslandIsolation(unittest.TestCase):
 
     def test_database_current_island_restoration(self):
         """Test that database current_island is properly restored after sampling"""
-        controller = ProcessParallelController(self.config, self.evaluation_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.evaluation_file, self.database
+        )
 
         # Add test programs
         for i in range(6):
             program = Program(
-                id=f"test_prog_{i}", code=f"# Test program {i}", metrics={"combined_score": 0.5}
+                id=f"test_prog_{i}",
+                code=f"# Test program {i}",
+                metrics={"combined_score": 0.5},
             )
             island_id = i % 3
             program.metadata["island"] = island_id
@@ -115,12 +127,16 @@ class TestIslandIsolation(unittest.TestCase):
 
     def test_island_distribution_in_batch(self):
         """Test that initial batch is distributed across islands"""
-        controller = ProcessParallelController(self.config, self.evaluation_file, self.database)
+        controller = ProcessParallelController(
+            self.config, self.evaluation_file, self.database
+        )
 
         # Add test programs
         for i in range(9):
             program = Program(
-                id=f"test_prog_{i}", code=f"# Test program {i}", metrics={"combined_score": 0.5}
+                id=f"test_prog_{i}",
+                code=f"# Test program {i}",
+                metrics={"combined_score": 0.5},
             )
             island_id = i % 3
             program.metadata["island"] = island_id
@@ -139,7 +155,9 @@ class TestIslandIsolation(unittest.TestCase):
         controller.start()
 
         try:
-            with patch.object(controller, "_submit_iteration", side_effect=mock_submit_iteration):
+            with patch.object(
+                controller, "_submit_iteration", side_effect=mock_submit_iteration
+            ):
                 # Start evolution with small batch to test distribution
                 asyncio.run(controller.run_evolution(1, 6))  # 6 iterations
 
@@ -172,7 +190,9 @@ class TestIslandMigration(unittest.TestCase):
         # Add programs to islands properly
         for i in range(30):
             program = Program(
-                id=f"prog_{i}", code=f"# Program {i}", metrics={"combined_score": i * 0.1}
+                id=f"prog_{i}",
+                code=f"# Program {i}",
+                metrics={"combined_score": i * 0.1},
             )
             island_id = i % 3
             program.metadata["island"] = island_id
@@ -213,16 +233,24 @@ class TestIslandMigration(unittest.TestCase):
             if program.metadata.get("migrant", False):
                 migrant_count += 1
                 # With new implementation, migrants have clean UUIDs, not "_migrant_" suffixes
-                self.assertNotIn("_migrant_", program.id, 
-                                "New implementation should not create _migrant suffix programs")
+                self.assertNotIn(
+                    "_migrant_",
+                    program.id,
+                    "New implementation should not create _migrant suffix programs",
+                )
 
         # Should have some migrant programs
         self.assertGreater(migrant_count, 0)
-        
+
         # Verify no programs have _migrant_ suffixes anywhere
-        migrant_suffix_count = sum(1 for p in self.database.programs.values() if "_migrant_" in p.id)
-        self.assertEqual(migrant_suffix_count, 0, 
-                        "No programs should have _migrant_ suffixes with new implementation")
+        migrant_suffix_count = sum(
+            1 for p in self.database.programs.values() if "_migrant_" in p.id
+        )
+        self.assertEqual(
+            migrant_suffix_count,
+            0,
+            "No programs should have _migrant_ suffixes with new implementation",
+        )
 
 
 if __name__ == "__main__":

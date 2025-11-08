@@ -201,7 +201,9 @@ def evaluate(program_path):
                 )
 
                 controller.database.add(existing_program)
-                controller.database.last_iteration = 10  # Simulate resuming from iteration 10
+                controller.database.last_iteration = (
+                    10  # Simulate resuming from iteration 10
+                )
 
                 # Verify database has the existing program
                 self.assertEqual(len(controller.database.programs), 1)

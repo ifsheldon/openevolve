@@ -69,7 +69,15 @@ class TestOpenAIReasoningModelDetection(unittest.TestCase):
 
     def test_non_openai_api_base(self):
         """Test that non-OpenAI API bases don't trigger reasoning model logic"""
-        OPENAI_REASONING_MODEL_PREFIXES = ("o1-", "o1", "o3-", "o3", "o4-", "gpt-5-", "gpt-5")
+        OPENAI_REASONING_MODEL_PREFIXES = (
+            "o1-",
+            "o1",
+            "o3-",
+            "o3",
+            "o4-",
+            "gpt-5-",
+            "gpt-5",
+        )
 
         def is_reasoning_model(model_name, api_base):
             model_lower = str(model_name).lower()
@@ -80,7 +88,11 @@ class TestOpenAIReasoningModelDetection(unittest.TestCase):
         # Even reasoning model names should return False for non-OpenAI APIs
         test_cases = [
             ("o1-mini", "https://api.anthropic.com/v1", False),
-            ("gpt-5", "https://generativelanguage.googleapis.com/v1beta/openai/", False),
+            (
+                "gpt-5",
+                "https://generativelanguage.googleapis.com/v1beta/openai/",
+                False,
+            ),
             ("o3-mini", "https://api.deepseek.com/v1", False),
         ]
 

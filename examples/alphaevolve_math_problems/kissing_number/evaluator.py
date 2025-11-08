@@ -48,11 +48,12 @@ def verify_sphere_packing(sphere_centers: np.ndarray, tol: float = 1e-6):
     # Checks that the minimum pairwise distance between centers >= the maximum norm of the centers.
     max_squared_norm = max(squared_norms)
     min_squared_distance = min(
-        compute_squared_norm(list(a - b)) for a, b in itertools.combinations(sphere_centers, 2)
+        compute_squared_norm(list(a - b))
+        for a, b in itertools.combinations(sphere_centers, 2)
     )
-    assert (
-        min_squared_distance >= max_squared_norm
-    ), f"Verification failed because the minimum squared distance = {min_squared_distance} < {max_squared_norm} = maximum squared norm."
+    assert min_squared_distance >= max_squared_norm, (
+        f"Verification failed because the minimum squared distance = {min_squared_distance} < {max_squared_norm} = maximum squared norm."
+    )
 
 
 def evaluate(program_path: str):

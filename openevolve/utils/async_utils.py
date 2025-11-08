@@ -33,7 +33,11 @@ def run_in_executor(f: Callable) -> Callable:
 
 
 async def run_with_timeout(
-    coro: Callable, timeout: float, *args: Any, timeout_error_value: Any = None, **kwargs: Any
+    coro: Callable,
+    timeout: float,
+    *args: Any,
+    timeout_error_value: Any = None,
+    **kwargs: Any,
 ) -> Any:
     """
     Run a coroutine with a timeout, returning a default value on timeout
@@ -59,7 +63,11 @@ async def run_with_timeout(
 
 
 async def run_sync_with_timeout(
-    func: Callable, timeout: float, *args: Any, timeout_error_value: Any = None, **kwargs: Any
+    func: Callable,
+    timeout: float,
+    *args: Any,
+    timeout_error_value: Any = None,
+    **kwargs: Any,
 ) -> Any:
     """
     Run a synchronous function in an executor with a timeout
@@ -148,14 +156,14 @@ async def retry_async(
             last_exception = e
             if i < retries:
                 logger.warning(
-                    f"Retry {i+1}/{retries} failed with {type(e).__name__}: {str(e)}. "
+                    f"Retry {i + 1}/{retries} failed with {type(e).__name__}: {str(e)}. "
                     f"Retrying in {current_delay:.2f}s..."
                 )
                 await asyncio.sleep(current_delay)
                 current_delay *= backoff
             else:
                 logger.error(
-                    f"All {retries+1} attempts failed. Last error: {type(e).__name__}: {str(e)}"
+                    f"All {retries + 1} attempts failed. Last error: {type(e).__name__}: {str(e)}"
                 )
 
     if last_exception:

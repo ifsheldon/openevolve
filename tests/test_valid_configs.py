@@ -18,7 +18,9 @@ class TestConfigValidity(unittest.TestCase):
         config_dir = os.path.join(os.path.dirname(__file__), "../configs")
         examples_dir = os.path.join(os.path.dirname(__file__), "../examples")
         config_files = []
-        for root, _, files in itertools.chain(os.walk(config_dir), os.walk(examples_dir)):
+        for root, _, files in itertools.chain(
+            os.walk(config_dir), os.walk(examples_dir)
+        ):
             for file in files:
                 if "config" in file and file.endswith(".yaml"):
                     config_files.append(os.path.join(root, file))
